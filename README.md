@@ -92,3 +92,30 @@ Status persiapan Vercel:
 - Belum melakukan push, deploy, atau perubahan pengaturan akun Vercel.
 - Hobby gratis memiliki kuota dan hanya untuk penggunaan pribadi
   nonkomersial. Konfigurasi ini tidak mengaktifkan produk berbayar.
+
+## Tes Create: POST /items
+
+Endpoint lama / dan /health tetap tersedia. Endpoint baru menerima JSON:
+{"name":"Kursi"}
+
+Tes setelah commit, push, dan deployment Vercel terbaru Ready:
+
+```powershell
+$body = @{ name = 'Kursi' } | ConvertTo-Json
+Invoke-RestMethod -Uri 'https://cek-golang-render.vercel.app/items' -Method Post -ContentType 'application/json' -Body $body
+```
+
+Hasil: HTTP 201 dengan data.id, data.name, data.created_at, dan storage memory.
+name wajib diisi dan maksimal 100 karakter. Body maksimal 4096 byte.
+GET /items mengembalikan 405; gunakan PowerShell untuk mengirim POST.
+
+Penyimpanan hanya di memori instance, bukan database. Data bisa hilang saat
+restart/redeploy dan tidak dibagikan antar-instance Vercel. Ini hanya tes
+Create; belum menyediakan Read, Update, atau Delete. Untuk data permanen,
+perlu database. Tidak membutuhkan secret atau environment variable baru.
+
+Jalankan pemeriksaan jika Go tersedia:
+go test ./...
+go build ./...
+
+Untuk menjalankan lokal gunakan go run . agar items.go ikut dikompilasi.

@@ -14,6 +14,7 @@ func main() {
   port = "10000"
  }
  mux := http.NewServeMux()
+ mux.Handle("/items", newItemHandler())
  mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
   if r.URL.Path != "/" && r.URL.Path != "/health" {
    http.NotFound(w, r)
